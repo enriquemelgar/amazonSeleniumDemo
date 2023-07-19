@@ -1,22 +1,18 @@
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import pageobjects.HomePage;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class HomePageTest {
     private WebDriver webDriver;
+    HomePage homePage;
 
     @BeforeEach
     public void setup() {
@@ -26,22 +22,14 @@ public class HomePageTest {
         options.addArguments("start-maximized");
         webDriver = new ChromeDriver(options);
         webDriver.get("https://www.amazon.com");
-    }
 
-    @Test
-    public void homePage_title_isVisible() {
-        String title = webDriver.getTitle();
-        assertThat(title, containsString("Amazon"));
+        homePage = new HomePage(webDriver);
     }
 
     @Test
     public void homePage_searchBar_lookForProduct() {
-        String resultText = webDriver.findElement(By.xpath("//span[@class='a-color-state a-text-bold']")).getText();
-        WebElement searchBar = webDriver.findElement(By.id("twotabsearchtextbox"));
-        searchBar.sendKeys("Steam Deck");
-
-        webDriver.findElement(By.id("nav-search-submit-button")).click();
-        assertThat(resultText, equalTo("\"Steam Deck\""));
+        homePage.searchProduct("Steam Deck");
+        homePage.checkProductResults("\"Steam Deck\"");
     }
 
     @AfterEach
